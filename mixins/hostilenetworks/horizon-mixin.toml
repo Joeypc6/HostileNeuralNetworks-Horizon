@@ -1,0 +1,644 @@
+[mod]
+id = "hostilenetworks"
+version = "7.0.0"
+
+# The Horizon commit this bundle was built and tested on.
+[compatibility]
+horizon_revision = "6560641ba51a452f6bc2407baa4eb1b3be517ca8"
+
+[[module]]
+id = "hostilenetworks"
+file = "crates/horizon-client/src/game.rs"
+name = "hostilenetworks"
+source = "hostile.rs"
+
+[[injection]]
+id = "hnn-be"
+kind = "HEAD"
+hook = "block_entity"
+hook_version = 1
+helper = "h_be.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "entity", ty = "&mut Option<(String, horizon_world::nbt::Compound)>", value = "&mut *entity" },
+]
+
+[[injection]]
+id = "hnn-be-ticks"
+kind = "HEAD"
+hook = "block_entity_ticks"
+hook_version = 1
+helper = "h_be_ticks.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "ticks", ty = "&mut bool", value = "&mut *ticks" },
+]
+
+[[injection]]
+id = "hnn-be-container"
+kind = "HEAD"
+hook = "block_entity_container"
+hook_version = 1
+helper = "h_be_container.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "container", ty = "&mut Option<horizon_client::containers::ModContainer>", value = "&mut *container" },
+]
+
+[[injection]]
+id = "hnn-be-energy"
+kind = "HEAD"
+hook = "block_entity_energy"
+hook_version = 1
+helper = "h_be_energy.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "energy", ty = "&mut Option<horizon_client::containers::ModEnergyBuffer>", value = "&mut *energy" },
+]
+
+[[injection]]
+id = "hnn-be-tick"
+kind = "HEAD"
+hook = "block_entity_tick"
+hook_version = 1
+helper = "h_be_tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "entity", ty = "&mut horizon_client::containers::ModBlockEntity", value = "&mut *entity" },
+]
+
+[[injection]]
+id = "hnn-accepts"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_container_accepts"
+helper = "h_accepts.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "entity", ty = "&horizon_client::containers::ModBlockEntity", value = "&*entity" },
+  { name = "slot", ty = "usize", value = "slot" },
+  { name = "stack", ty = "&horizon_client::items::ItemStack", value = "stack" },
+  { name = "cancel", ty = "&mut bool", value = "&mut *cancel" },
+]
+
+[[injection]]
+id = "hnn-menu-button"
+kind = "HEAD"
+hook = "menu_button_v2"
+hook_version = 1
+helper = "h_menu_button.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "entity", ty = "&mut horizon_client::containers::ModBlockEntity", value = "&mut *entity" },
+  { name = "id", ty = "i32", value = "id" },
+]
+
+[[injection]]
+id = "hnn-placed"
+kind = "HEAD"
+hook = "place_block"
+hook_version = 1
+helper = "h_placed.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+]
+
+[[injection]]
+id = "hnn-right-click"
+kind = "HEAD"
+hook = "right_click_block"
+hook_version = 1
+helper = "h_right_click.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hnn-interact-entity"
+kind = "HEAD"
+hook = "interact_entity"
+hook_version = 1
+helper = "h_interact_entity.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "kind", ty = "&str", value = "kind" },
+  { name = "stack", ty = "Option<&ItemStack>", value = "stack" },
+  { name = "claimed", ty = "&mut bool", value = "&mut *claimed" },
+]
+
+[[injection]]
+id = "hnn-use-on"
+kind = "HEAD"
+hook = "use_item_on"
+hook_version = 1
+helper = "h_use_on.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "stack", ty = "&ItemStack", value = "stack" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "claimed", ty = "&mut bool", value = "&mut *claimed" },
+]
+
+[[injection]]
+id = "hnn-use-item"
+kind = "HEAD"
+hook = "use_item"
+hook_version = 1
+helper = "h_use_item.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "stack", ty = "&ItemStack", value = "stack" },
+  { name = "claimed", ty = "&mut bool", value = "&mut *claimed" },
+]
+
+[[injection]]
+id = "hnn-destroy"
+kind = "HEAD"
+hook = "destroy_block"
+hook_version = 1
+helper = "h_destroy.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+]
+
+[[injection]]
+id = "hnn-killed"
+kind = "HEAD"
+hook = "mob_killed"
+hook_version = 1
+helper = "h_killed.rs"
+bindings = [
+  { name = "player", ty = "u128", value = "player" },
+  { name = "kind", ty = "&str", value = "kind" },
+]
+
+[[injection]]
+id = "hnn-inventory-tick"
+kind = "HEAD"
+hook = "inventory_tick"
+hook_version = 1
+helper = "h_inventory_tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "slot", ty = "i32", value = "slot" },
+]
+
+[[injection]]
+id = "hnn-input-closed"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_menu_input_closed"
+helper = "h_input_closed.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "uuid", ty = "u128", value = "uuid" },
+  { name = "items", ty = "&mut Vec<Option<ItemStack>>", value = "&mut *slots" },
+]
+
+[[injection]]
+id = "hnn-screen"
+kind = "HEAD"
+hook = "screen"
+hook_version = 1
+helper = "h_screen.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "screen", ty = "&mut Option<crate::game::native_hooks::NativeScreen>", value = "&mut *screen" },
+]
+
+[[injection]]
+id = "hnn-screen-draw"
+kind = "HEAD"
+hook = "screen_draw"
+hook_version = 1
+helper = "h_screen_draw.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "block", ty = "&str", value = "block" },
+  { name = "data", ty = "&[i32]", value = "data" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+  { name = "origin", ty = "[f32; 2]", value = "origin" },
+]
+
+[[injection]]
+id = "hnn-screen-click"
+kind = "HEAD"
+hook = "screen_click"
+hook_version = 1
+helper = "h_screen_click.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "block", ty = "&str", value = "block" },
+  { name = "data", ty = "&[i32]", value = "data" },
+  { name = "at", ty = "[f32; 2]", value = "at" },
+  { name = "right", ty = "bool", value = "right" },
+  { name = "button", ty = "&mut Option<i32>", value = "&mut *button" },
+]
+
+[[injection]]
+id = "hnn-screen-tooltip"
+kind = "HEAD"
+hook = "screen_tooltip"
+hook_version = 1
+helper = "h_screen_tooltip.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "block", ty = "&str", value = "block" },
+  { name = "data", ty = "&[i32]", value = "data" },
+  { name = "at", ty = "[f32; 2]", value = "at" },
+  { name = "lines", ty = "&mut Vec<String>", value = "&mut *lines" },
+]
+
+[[injection]]
+id = "hnn-tooltip"
+kind = "HEAD"
+hook = "tooltip"
+hook_version = 1
+helper = "h_tooltip.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "stack", ty = "&ItemStack", value = "stack" },
+  { name = "lines", ty = "&mut Vec<(Text, u32)>", value = "&mut *lines" },
+]
+
+[[injection]]
+id = "hnn-hud"
+kind = "HEAD"
+hook = "hud"
+hook_version = 1
+helper = "h_hud.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+]
+
+[[injection]]
+id = "hnn-update-tag"
+kind = "HEAD"
+hook = "block_entity_update_tag"
+hook_version = 1
+helper = "h_update_tag.rs"
+bindings = [
+  { name = "entity", ty = "&horizon_client::containers::ModBlockEntity", value = "&*entity" },
+  { name = "tag", ty = "&mut Option<horizon_world::nbt::Compound>", value = "&mut *tag" },
+]
+
+[[injection]]
+id = "hnn-kit-frame"
+kind = "HEAD"
+hook = "frame"
+hook_version = 1
+helper = "h_kit_frame.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "hnn-list"
+kind = "HEAD"
+hook = "mods"
+hook_version = 1
+helper = "list.rs"
+bindings = [
+  { name = "mods", ty = "&mut Vec<crate::game::native_hooks::NativeMod>", value = "&mut *mods" },
+]
+
+[[injection]]
+id = "hnn-embedded-content"
+kind = "HEAD"
+cancellable = true
+target = "horizon_client::game::mods::content_root"
+helper = "embedded_content.rs"
+bindings = [
+  { name = "root", ty = "&std::path::Path", value = "root" },
+  { name = "enabled", ty = "&std::collections::BTreeSet<String>", value = "enabled" },
+  { name = "dev", ty = "&[std::path::PathBuf]", value = "dev" },
+]
+
+[[crate]]
+id = "optional"
+path = "optional"
+
+# ---- BEGIN JEI KIT (written by jei-kit/apply.py; don't edit here)
+[[injection]]
+id = "hostilenetworks-kit-panel-event"
+priority = 110
+kind = "HEAD"
+hook = "panel_event"
+hook_version = 1
+helper = "kit_jei_event.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "event", ty = "&crate::game::native_hooks::NativePanelEvent", value = "event" },
+]
+
+[[module]]
+id = "hostilenetworks-kit-collection"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_collection_hostilenetworks"
+source = "kit_collection.rs"
+
+[[module]]
+id = "hostilenetworks-kit-collection-size"
+file = "crates/horizon-client/src/game/native_panel.rs"
+name = "hz_kit_panel_hostilenetworks"
+source = "kit_panel.rs"
+
+[[module]]
+id = "hostilenetworks-kit-loot-items"
+file = "crates/horizon-items/src/items.rs"
+name = "hz_kit_loot_hostilenetworks"
+source = "kit_loot_items.rs"
+
+[[module]]
+id = "hostilenetworks-kit-loot-keys"
+file = "crates/horizon-world/src/loot.rs"
+name = "hz_kit_keys_hostilenetworks"
+source = "kit_loot_keys.rs"
+
+[[module]]
+id = "hostilenetworks-kit-window"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_window_hostilenetworks"
+source = "kit_window.rs"
+
+[[module]]
+id = "hostilenetworks-kit-creative"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_creative_hostilenetworks"
+source = "kit_creative.rs"
+
+[[injection]]
+id = "hostilenetworks-kit-window-hud-before"
+priority = 110
+kind = "HEAD"
+target = "horizon_client::game::Game<'_>::hud"
+helper = "kit_window_hud_before.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-window-hud-after"
+priority = 110
+kind = "HEAD"
+target = "horizon_client::game::music::Game<'_>::draw_music_toast"
+helper = "kit_window_hud_after.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-window-pressed"
+priority = 110
+kind = "HEAD"
+hook = "screen_mouse_button_pressed_pre"
+hook_version = 1
+helper = "kit_window_pressed.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "screen" },
+  { name = "button", ty = "i32", value = "button" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-window-released"
+priority = 110
+kind = "HEAD"
+hook = "screen_mouse_button_released_pre"
+hook_version = 1
+helper = "kit_panel_released.rs"
+bindings = [
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "screen" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-window-key"
+priority = 110
+kind = "HEAD"
+hook = "screen_key_pressed_pre"
+hook_version = 1
+helper = "kit_window_key.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "screen" },
+  { name = "key", ty = "&str", value = "key" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-window-char"
+priority = 110
+kind = "HEAD"
+hook = "screen_char_typed_pre"
+hook_version = 1
+helper = "kit_window_char.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "c", ty = "char", value = "c" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-window-scrolled"
+priority = 110
+kind = "HEAD"
+hook = "screen_mouse_scrolled_pre"
+hook_version = 1
+helper = "kit_window_scrolled.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "scroll", ty = "[f64; 2]", value = "scroll" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-panel-tint"
+priority = 110
+kind = "HEAD"
+target = "horizon_client::game::native_panel::Game<'_>::draw_mod_browser"
+helper = "kit_panel_tint.rs"
+bindings = [
+  { name = "game", ty = "&Game<'_>", value = "&*self" },
+  { name = "batch", ty = "&mut HudBatch", value = "&mut *batch" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-no-recipes-line"
+priority = 110
+kind = "HEAD"
+cancellable = true
+target = "horizon_client::game::native_hooks::Game<'_>::native_chat"
+helper = "kit_no_recipes_line.rs"
+bindings = [
+  { name = "text", ty = "&str", value = "text" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-creative-width"
+priority = 110
+kind = "HEAD"
+cancellable = true
+target = "horizon_client::game::native_hooks::Game<'_>::native_screen_width"
+helper = "kit_creative_width.rs"
+
+[[module]]
+id = "hostilenetworks-kit-layer"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_layer_hostilenetworks"
+source = "kit_layer.rs"
+
+[[module]]
+id = "hostilenetworks-kit-guide"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_guide_hostilenetworks"
+source = "kit_guide.rs"
+
+[[injection]]
+id = "hostilenetworks-kit-layer-frame"
+kind = "HEAD"
+hook = "frame"
+hook_version = 1
+helper = "kit_layer_frame.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-frame"
+priority = 50
+kind = "HEAD"
+hook = "frame"
+hook_version = 1
+helper = "kit_guide_frame.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-render_post"
+priority = 50
+kind = "HEAD"
+hook = "screen_render_post"
+hook_version = 1
+helper = "kit_guide_render_post.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "&*screen" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-pressed"
+priority = 200
+kind = "HEAD"
+hook = "screen_mouse_button_pressed_pre"
+hook_version = 1
+helper = "kit_guide_pressed.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "&*screen" },
+  { name = "button", ty = "i32", value = "button" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-key"
+priority = 200
+kind = "HEAD"
+hook = "screen_key_pressed_pre"
+hook_version = 1
+helper = "kit_guide_key.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "&*screen" },
+  { name = "key", ty = "&str", value = "key" },
+  { name = "repeat", ty = "bool", value = "repeat" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-char"
+priority = 200
+kind = "HEAD"
+hook = "screen_char_typed_pre"
+hook_version = 1
+helper = "kit_guide_char.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "c", ty = "char", value = "c" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-scrolled"
+priority = 200
+kind = "HEAD"
+hook = "screen_mouse_scrolled_pre"
+hook_version = 1
+helper = "kit_guide_scrolled.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "scroll", ty = "[f64; 2]", value = "scroll" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-dragged"
+priority = 200
+kind = "HEAD"
+hook = "screen_mouse_dragged_pre"
+hook_version = 1
+helper = "kit_guide_dragged.rs"
+bindings = [
+  { name = "delta", ty = "[f32; 2]", value = "delta" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-released"
+priority = 200
+kind = "HEAD"
+hook = "screen_mouse_button_released_pre"
+hook_version = 1
+helper = "kit_guide_released.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-tooltip"
+priority = 200
+kind = "HEAD"
+hook = "tooltip"
+hook_version = 1
+helper = "kit_guide_tooltip.rs"
+bindings = [
+  { name = "stack", ty = "&horizon_client::items::ItemStack", value = "&*stack" },
+  { name = "lines", ty = "&mut Vec<(horizon_client::text::Text, u32)>", value = "&mut *lines" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-guide-shown"
+priority = 200
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_tooltip_render_pre"
+helper = "kit_guide_shown.rs"
+bindings = [
+  { name = "stack", ty = "&ItemStack", value = "stack" },
+]
+
+
+[[module]]
+id = "hostilenetworks-kit-marker"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_v2_hostilenetworks"
+source = "kit_marker.rs"
+# ---- END JEI KIT
