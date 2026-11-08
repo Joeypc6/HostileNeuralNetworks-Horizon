@@ -11,12 +11,12 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BUNDLE = ROOT / "mixins" / "hostilenetworks"
 BUILD = ROOT.parent / "native-build" / "main" / "hostilenetworks"
-JAR = ROOT.parent / "HostileNeuralNetworks-26.1.2-7.0.0.jar"
+JAR = ROOT.parent / "Ported" / "HostileNeuralNetworks-26.1.2-7.0.0.jar"
 if not JAR.exists():
     JAR = ROOT.parent / "Ported" / JAR.name
 HORIZON = "6560641ba51a452f6bc2407baa4eb1b3be517ca8"
 MIXINS = "5a64af938ec86b00d53d16a408aabc0038fb3e57"
-VERSION = "7.0.0"
+VERSION = "7.0.1"
 M = "crate::game::hostilenetworks"
 
 GAME_MUT = ("game", "&mut crate::game::Game<'_>", "&mut *self")
@@ -75,7 +75,7 @@ fn hostilenetworks_embedded_content(root: &std::path::Path, enabled: &std::colle
 fn hostilenetworks_listed(mods: &mut Vec<crate::game::native_hooks::NativeMod>) {
     mods.push(crate::game::native_hooks::NativeMod {
         id: "hostilenetworks".into(),
-        title: "Hostile Neural Networks 7.0.0".into(),
+        title: "Hostile Neural Networks 7.0.1".into(),
         description: "Defeating hostile entities - but in simulations!".into(),
         keys: vec![["guide".to_string(), "Open Guide for Items".to_string(), "key.keyboard.w".to_string()]],
     });

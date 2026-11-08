@@ -1,6 +1,6 @@
 [mod]
 id = "hostilenetworks"
-version = "7.0.0"
+version = "7.0.1"
 
 # The Horizon commit this bundle was built and tested on.
 [compatibility]
@@ -639,6 +639,6 @@ bindings = [
 [[module]]
 id = "hostilenetworks-kit-marker"
 file = "crates/horizon-client/src/game.rs"
-name = "hz_kit_v2_hostilenetworks"
+name = "hz_kit_v3_hostilenetworks"
 source = "kit_marker.rs"
 # ---- END JEI KIT

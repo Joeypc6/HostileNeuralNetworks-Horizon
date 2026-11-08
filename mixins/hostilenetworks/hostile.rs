@@ -935,7 +935,65 @@ fn set_int_array(nbt: &mut Compound, key: &str, values: Vec<i32>) {
     nbt.insert(java(key), Tag::IntArray(values.into()));
 }
 
+// ---- AE2: how long a machine takes, for a crafting job's time left
+
+hostilenetworks_optional::if_mod_items!("port_ae2_me", {
+/// A pattern's craft in a Simulation Chamber (240 ticks a run, 300 training, and the tick it starts on) or a Loot
+/// Fabricator (60 ticks and the tick it makes the drop on), one run for each matrix or prediction it takes.
+fn ae2_machine(game: &Game<'_>, pos: [i32; 3], block: &str, inputs: &[(&str, i64)]) -> Option<crate::game::port_ae2_me::MachineTime> {
+    let Some(horizon_client::containers::BlockEntity::Mod(e)) = game.world.block_entities.get(&(pos[0], pos[1], pos[2])) else { return None };
+    let runtime = get_i(&e.nbt, "runtime", 0);
+    let (cycle, runs, done) = match block {
+        "hostilenetworks:sim_chamber" => {
+            let model = e.items.first().and_then(Option::as_ref).and_then(|s| model_of(game, s))?;
+            let runs = inputs.iter().find(|(id, _)| input_matches(game, model, &ItemStack::new(id, 1))).map(|(_, n)| *n)?;
+            let run_time = if get_i(&e.nbt, "simMode", 0) == 1 { 300 } else { 240 };
+            (f64::from(run_time + 1), runs, (runtime > 0).then(|| f64::from(run_time - runtime + 1)))
+        }
+        "hostilenetworks:loot_fabricator" => {
+            let runs = inputs.iter().find(|(id, _)| *id == "hostilenetworks:prediction").map(|(_, n)| *n)?;
+            (61.0, runs, (runtime > 0).then(|| f64::from(runtime)))
+        }
+        _ => return None,
+    };
+    let total = cycle * runs.max(1) as f64;
+    Some(crate::game::port_ae2_me::MachineTime { ticks: total, latency: total, done })
+}
+});
+
+fn register_ae2() {
+    hostilenetworks_optional::if_mod!("port_ae2_me", {
+        static ONCE: std::sync::Once = std::sync::Once::new();
+        ONCE.call_once(|| crate::game::port_ae2_me::register_machine(ae2_machine));
+    } else { () });
+}
+
+// ---- Jade: HostileJadePlugin, the IO port's mode
+
+hostilenetworks_optional::if_mod_items!("jade", {
+const JADE_IO_PORT: &str = "plugin_hostilenetworks.io_port_mode";
+
+fn jade_lines(game: &Game<'_>, target: &crate::game::jade::Target, lines: &mut Vec<crate::game::jade::Line>) {
+    let crate::game::jade::Target::Block { pos, block } = target else { return };
+    if block != "hostilenetworks:data_center_io_port" || !crate::game::jade::plugin_on(game, JADE_IO_PORT) {
+        return;
+    }
+    let id = game.world.block(pos[0], pos[1], pos[2]);
+    let mode = game.pack.assets.registry.state(id).and_then(|s| s.properties.get("mode").map(|m| m.to_string())).unwrap_or_else(|| "energy".to_owned());
+    let word = lang(&format!("hostilenetworks.io_port.mode.{mode}"), &mode);
+    lines.push(crate::game::jade::Line::text(lang("hostilenetworks.io_port.mode_set", "Mode: %s").replace("%s", &word)));
+}
+});
+
+fn register_jade() {
+    hostilenetworks_optional::if_mod!("jade", {
+        crate::game::jade::register_option(JADE_IO_PORT, "Data Center IO Port Mode", true);
+        crate::game::jade::register_client(jade_lines);
+    } else { () });
+}
+
 pub fn block_entity_tick(game: &mut Game<'_>, pos: Pos, entity: &mut ModBlockEntity) {
+    register_ae2();
     match entity.id.as_str() {
         "hostilenetworks:sim_chamber" => {
             entity.items.resize(4, None);
@@ -1708,6 +1766,7 @@ pub fn kit_frame(game: &mut Game<'_>) {
         return;
     }
     kit_guide::register("hostilenetworks", "Hostile Neural Networks", "Hostile Neural Networks guide");
+    register_jade();
     hostilenetworks_optional::if_mod!("jei", {
         kit_layer::register(kit_layer::Provider::new("hostilenetworks"));
     } else { () });

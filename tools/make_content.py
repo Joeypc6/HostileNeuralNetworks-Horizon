@@ -184,7 +184,7 @@ def main(jar, out):
         "# Hostile Neural Networks' blocks and items, from HostileNeuralNetworks-26.1.2-7.0.0.jar by hostilenetworks-horizon/tools/make_content.py.",
         f'id = "{ID}"',
         'name = "Hostile Neural Networks (blocks and items)"',
-        'version = "7.0.0"',
+        'version = "7.0.1"',
         'description = "Hostile Neural Networks\' blocks, recipes and textures."',
         'authors = ["Shadows_of_Fire"]',
         'api = "0.2"',

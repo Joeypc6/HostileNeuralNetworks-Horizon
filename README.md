@@ -15,6 +15,15 @@ hooks, so no original code runs. The textures, models, recipes and data models a
 - The Loot Fabricator with fixed and queued outputs, and the Fabrication Directive.
 - The Data Center: the 7 by 7 by 7 shell check, 25 models, shared inputs and outputs, and IO ports by mode.
 - `hostilenetworks.toml` in the config folder holds the Java mod's power and model options. The W guide has pages written for this port.
+- Jade: the IO port's mode (HostileJadePlugin, "Data Center IO Port Mode" in Jade's options), and the machines'
+  contents and energy as Jade shows them for any mod.
+
+## With AE2
+
+The machines don't push what they make, as on NeoForge: a pattern provider fills them, and an import bus on the
+machine (or anything else that pulls) brings the result back to the network. The AE2 port's crafting status knows a
+Simulation Chamber's run (240 ticks, 300 training) and a Loot Fabricator's (60), so a job's time left is right from
+its first craft. The Data Center's time is learned as it works.
 
 ## What differs from the Java mod
 
