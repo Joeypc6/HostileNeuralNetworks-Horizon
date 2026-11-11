@@ -52,3 +52,7 @@ MIT, as the original. See `LICENSE`.
 On Horizon commit `6560641`, on Windows: attuning a framework on a zombie, a kill raising a model in the learner, putting models in and
 out of the learner, a Simulation Chamber cycle, a Loot Fabricator choice and its drops, a Data Center shell, run and outputs, and a LAN
 guest opening a chamber, with 0 panics. Since 7.0.2 also: an IO port taking Enderman batches of 16 pearls without passing 16, an Iron Furnaces generator filling a chamber, the Deep Learner's screen putting models in and taking them out, the mobs on Data Model icons, and the W guide. **Not tested:** a dedicated server, the learner's screen for a LAN guest, the Fabrication Directive, and block models.
+
+Also built on Horizon commit `fdc87ae` (Nightly 2026-11-08) as `native-fdc87ae-83d10460ef68`, with AE2, Jade, JEI (mod kit 14),
+Elevator, Iron Furnaces, Tinkers' Construct, Ender IO, Powah and Apothic Spawners: all ten compile together, and the W guide opens in
+game with its 3D scenes. The block and item models were compared with the 7.0.0 jar's: all 23 the same, none missing.
