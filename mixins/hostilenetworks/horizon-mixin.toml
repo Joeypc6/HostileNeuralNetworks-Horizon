@@ -1,6 +1,6 @@
 [mod]
 id = "hostilenetworks"
-version = "7.0.2"
+version = "7.0.3"
 
 # The Horizon commit this bundle was built and tested on.
 [compatibility]

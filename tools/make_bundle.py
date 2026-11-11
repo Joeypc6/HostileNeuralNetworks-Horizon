@@ -16,7 +16,7 @@ if not JAR.exists():
     JAR = ROOT.parent / "Ported" / JAR.name
 HORIZON = "fdc87aecdbd116bf1e08adcd062fcbaea8c2e2ca"
 MIXINS = "5a64af938ec86b00d53d16a408aabc0038fb3e57"
-VERSION = "7.0.2"
+VERSION = "7.0.3"
 M = "crate::game::hostilenetworks"
 
 GAME_MUT = ("game", "&mut crate::game::Game<'_>", "&mut *self")
