@@ -14,9 +14,9 @@ BUILD = ROOT.parent / "native-build" / "main" / "hostilenetworks"
 JAR = ROOT.parent / "Ported" / "HostileNeuralNetworks-26.1.2-7.0.0.jar"
 if not JAR.exists():
     JAR = ROOT.parent / "Ported" / JAR.name
-HORIZON = "6560641ba51a452f6bc2407baa4eb1b3be517ca8"
+HORIZON = "fdc87aecdbd116bf1e08adcd062fcbaea8c2e2ca"
 MIXINS = "5a64af938ec86b00d53d16a408aabc0038fb3e57"
-VERSION = "7.0.1"
+VERSION = "7.0.2"
 M = "crate::game::hostilenetworks"
 
 GAME_MUT = ("game", "&mut crate::game::Game<'_>", "&mut *self")
@@ -39,12 +39,16 @@ HOOKS = [
     ("use-item", "use_item", [GAME_MUT, ("stack", "&ItemStack", "stack"), ("claimed", "&mut bool", "&mut *claimed")], "use_item(game, stack, claimed)"),
     ("destroy", "destroy_block", [GAME_MUT, ("pos", "[i32; 3]", "pos")], "destroyed(game, pos)"),
     ("killed", "mob_killed", [("player", "u128", "player"), ("kind", "&str", "kind")], "mob_killed(player, kind)"),
-    ("inventory-tick", "inventory_tick", [GAME_MUT, ("slot", "i32", "slot")], "inventory_tick(game, slot)"),
+    ("inventory-tick", "inventory_tick", [GAME_MUT, ("slot", "i32", "slot"), ("selected", "bool", "selected")], "inventory_tick(game, slot, selected)"),
+    ("item-decorations", "item_decorations", [GAME, ("stack", "&horizon_client::items::ItemStack", "&*stack"), ("x", "f32", "x"), ("y", "f32", "y"), ("batch", "&mut horizon_client::hud::HudBatch", "&mut *batch")], "item_decorations(game, stack, x, y, batch)"),
+    ("net-from-client", "net_from_client", [GAME_MUT, ("player", "u128", "player"), ("channel", "&str", "channel"), ("data", "&[u8]", "data")], "learner_message(game, player, channel, data)"),
+    ("learner-press", "screen_mouse_button_pressed_pre", [GAME, ("screen", "&crate::game::native_hooks::NativeScreenView<'_>", "screen"), ("button", "i32", "button"), ("canceled", "&mut bool", "&mut *canceled")], "learner_press(game, screen, button, canceled)"),
     ("input-closed", "target:horizon_client::game::native_hooks::Game<'_>::native_menu_input_closed", [GAME_MUT, ("uuid", "u128", "uuid"), ("items", "&mut Vec<Option<ItemStack>>", "&mut *slots")], "menu_input_closed(game, uuid, items)"),
     ("screen", "screen", [("block", "&str", "block"), ("screen", "&mut Option<crate::game::native_hooks::NativeScreen>", "&mut *screen")], "screen(block, screen)"),
     ("screen-draw", "screen_draw", [GAME, ("block", "&str", "block"), ("data", "&[i32]", "data"), ("batch", "&mut horizon_client::hud::HudBatch", "&mut *batch"), ("origin", "[f32; 2]", "origin")], "screen_draw(game, block, data, batch, origin)"),
     ("screen-click", "screen_click", [GAME, ("block", "&str", "block"), ("data", "&[i32]", "data"), ("at", "[f32; 2]", "at"), ("right", "bool", "right"), ("button", "&mut Option<i32>", "&mut *button")], "screen_click(game, block, data, at, right, game.has_shift_down(), button)"),
     ("screen-tooltip", "screen_tooltip", [GAME, ("block", "&str", "block"), ("data", "&[i32]", "data"), ("at", "[f32; 2]", "at"), ("lines", "&mut Vec<String>", "&mut *lines")], "screen_tooltip(game, block, data, at, lines)"),
+    ("screen-post", "screen_render_post", [GAME, ("batch", "&mut horizon_client::hud::HudBatch", "&mut *batch"), ("screen", "&crate::game::native_hooks::NativeScreenView<'_>", "&*screen")], "screen_post(game, batch, screen)"),
     ("tooltip", "tooltip", [GAME, ("stack", "&ItemStack", "stack"), ("lines", "&mut Vec<(Text, u32)>", "&mut *lines")], "tooltip(game, stack, lines)"),
     ("hud", "hud", [GAME, ("batch", "&mut horizon_client::hud::HudBatch", "&mut *batch")], "hud(game, batch)"),
     ("update-tag", "block_entity_update_tag", [("entity", "&horizon_client::containers::ModBlockEntity", "&*entity"), ("tag", "&mut Option<horizon_world::nbt::Compound>", "&mut *tag")], "update_tag(entity, tag)"),
@@ -75,7 +79,7 @@ fn hostilenetworks_embedded_content(root: &std::path::Path, enabled: &std::colle
 fn hostilenetworks_listed(mods: &mut Vec<crate::game::native_hooks::NativeMod>) {
     mods.push(crate::game::native_hooks::NativeMod {
         id: "hostilenetworks".into(),
-        title: "Hostile Neural Networks 7.0.1".into(),
+        title: "Hostile Neural Networks 7.0.2".into(),
         description: "Defeating hostile entities - but in simulations!".into(),
         keys: vec![["guide".to_string(), "Open Guide for Items".to_string(), "key.keyboard.w".to_string()]],
     });
@@ -117,6 +121,9 @@ def main():
     out += ["[[injection]]", 'id = "hnn-embedded-content"', 'kind = "HEAD"', "cancellable = true", 'target = "horizon_client::game::mods::content_root"', 'helper = "embedded_content.rs"', "bindings = [", binding_lines([("root", "&std::path::Path", "root"), ("enabled", "&std::collections::BTreeSet<String>", "enabled"), ("dev", "&[std::path::PathBuf]", "dev")]).rstrip("\n"), "]", ""]
     (BUNDLE / "horizon-mixin.toml").write_text("\n".join(out), encoding="utf8")
     subprocess.run([sys.executable, str(ROOT.parent / "jei-kit" / "apply.py"), "hostilenetworks", str(BUNDLE)], check=True)
+    # The registry checks with -D warnings: helpers' unused parameters, and those of the `else` a missing mod leaves.
+    for fixer in ("unused_helper_params.py", "use_helper_params.py"):
+        subprocess.run([sys.executable, str(ROOT.parent / "tools" / fixer), str(BUNDLE)], check=True)
     (BUNDLE / "data").mkdir(exist_ok=True)
     subprocess.run([sys.executable, str(ROOT / "tools" / "make_content.py"), str(JAR), str(BUNDLE / "data" / "hostilenetworks-content.hmod")], check=True)
     target = BUILD / "mixins" / "hostilenetworks"

@@ -3,5 +3,5 @@ fn kit_guide_frame_hostilenetworks(game: &mut crate::game::Game<'_>) {
     if game.player.is_some() {
         crate::game::hz_kit_guide_hostilenetworks::frame_hook(game);
     }
-} else { () })
+} else { let _ = game; () })
 }

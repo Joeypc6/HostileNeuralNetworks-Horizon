@@ -5,5 +5,5 @@ fn kit_guide_render_post_hostilenetworks(game: &crate::game::Game<'_>, batch: &m
     }
     crate::game::hz_kit_guide_hostilenetworks::screen_frame(screen.id, screen.menu);
     crate::game::hz_kit_guide_hostilenetworks::draw(game, batch, screen.mouse);
-} else { () })
+} else { let _ = (game, batch, screen); () })
 }

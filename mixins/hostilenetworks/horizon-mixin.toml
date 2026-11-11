@@ -1,10 +1,10 @@
 [mod]
 id = "hostilenetworks"
-version = "7.0.1"
+version = "7.0.2"
 
 # The Horizon commit this bundle was built and tested on.
 [compatibility]
-horizon_revision = "6560641ba51a452f6bc2407baa4eb1b3be517ca8"
+horizon_revision = "fdc87aecdbd116bf1e08adcd062fcbaea8c2e2ca"
 
 [[module]]
 id = "hostilenetworks"
@@ -185,6 +185,47 @@ helper = "h_inventory_tick.rs"
 bindings = [
   { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
   { name = "slot", ty = "i32", value = "slot" },
+  { name = "selected", ty = "bool", value = "selected" },
+]
+
+[[injection]]
+id = "hnn-item-decorations"
+kind = "HEAD"
+hook = "item_decorations"
+hook_version = 1
+helper = "h_item_decorations.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "stack", ty = "&horizon_client::items::ItemStack", value = "&*stack" },
+  { name = "x", ty = "f32", value = "x" },
+  { name = "y", ty = "f32", value = "y" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+]
+
+[[injection]]
+id = "hnn-net-from-client"
+kind = "HEAD"
+hook = "net_from_client"
+hook_version = 1
+helper = "h_net_from_client.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "player", ty = "u128", value = "player" },
+  { name = "channel", ty = "&str", value = "channel" },
+  { name = "data", ty = "&[u8]", value = "data" },
+]
+
+[[injection]]
+id = "hnn-learner-press"
+kind = "HEAD"
+hook = "screen_mouse_button_pressed_pre"
+hook_version = 1
+helper = "h_learner_press.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "screen" },
+  { name = "button", ty = "i32", value = "button" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
 ]
 
 [[injection]]
@@ -250,6 +291,18 @@ bindings = [
   { name = "data", ty = "&[i32]", value = "data" },
   { name = "at", ty = "[f32; 2]", value = "at" },
   { name = "lines", ty = "&mut Vec<String>", value = "&mut *lines" },
+]
+
+[[injection]]
+id = "hnn-screen-post"
+kind = "HEAD"
+hook = "screen_render_post"
+hook_version = 1
+helper = "h_screen_post.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+  { name = "screen", ty = "&crate::game::native_hooks::NativeScreenView<'_>", value = "&*screen" },
 ]
 
 [[injection]]
@@ -341,6 +394,12 @@ id = "hostilenetworks-kit-collection"
 file = "crates/horizon-client/src/game.rs"
 name = "hz_kit_collection_hostilenetworks"
 source = "kit_collection.rs"
+
+[[module]]
+id = "hostilenetworks-kit-math"
+file = "crates/horizon-client/src/game.rs"
+name = "hz_kit_math_hostilenetworks"
+source = "kit_math.rs"
 
 [[module]]
 id = "hostilenetworks-kit-collection-size"
@@ -456,6 +515,28 @@ bindings = [
   { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
   { name = "scroll", ty = "[f64; 2]", value = "scroll" },
   { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-slot-tip"
+priority = 110
+kind = "HEAD"
+cancellable = true
+target = "horizon_client::game::stations::Game<'_>::draw_slot_tooltip"
+helper = "kit_slot_tip.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+]
+
+[[injection]]
+id = "hostilenetworks-kit-screen-tip"
+priority = 110
+kind = "HEAD"
+cancellable = true
+target = "horizon_client::game::native_hooks::Game<'_>::draw_native_screen_tooltip"
+helper = "kit_screen_tip.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
 ]
 
 [[injection]]
@@ -626,6 +707,16 @@ bindings = [
 ]
 
 [[injection]]
+id = "hostilenetworks-kit-guide-hide-tip"
+priority = 190
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_tooltip_render_pre"
+helper = "kit_guide_hide_tip.rs"
+bindings = [
+  { name = "cancel", ty = "&mut bool", value = "&mut *cancel" },
+]
+
+[[injection]]
 id = "hostilenetworks-kit-guide-shown"
 priority = 200
 kind = "HEAD"
@@ -639,6 +730,6 @@ bindings = [
 [[module]]
 id = "hostilenetworks-kit-marker"
 file = "crates/horizon-client/src/game.rs"
-name = "hz_kit_v3_hostilenetworks"
+name = "hz_kit_v14_hostilenetworks"
 source = "kit_marker.rs"
 # ---- END JEI KIT

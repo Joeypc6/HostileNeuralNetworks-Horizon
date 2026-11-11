@@ -5,5 +5,5 @@ fn ae2_jei_event(
 ) {
     hostilenetworks_optional::if_kit_jei!("hostilenetworks", {
     crate::game::hz_kit_layer_hostilenetworks::event(game, mod_id, event);
-} else { () })
+} else { let _ = (game, mod_id, event); () })
 }

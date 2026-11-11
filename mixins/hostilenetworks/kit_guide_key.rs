@@ -4,5 +4,5 @@ fn kit_guide_key_hostilenetworks(game: &crate::game::Game<'_>, screen: &crate::g
         return;
     }
     crate::game::hz_kit_guide_hostilenetworks::key(game, screen.menu, key, repeat, canceled);
-} else { () })
+} else { let _ = (game, screen, key, repeat, canceled); () })
 }

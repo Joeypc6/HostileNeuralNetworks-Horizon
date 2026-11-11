@@ -27,8 +27,8 @@ its first craft. The Data Center's time is learned as it works.
 
 ## What differs from the Java mod
 
-- **No mobs in the screens.** The Java mod draws a turning ghost of each mob in its data model items, screens, the Deep Learner and the Data Center. Here a model's item is its frame alone, and its name is in the tooltip.
-- **The Deep Learner has no screen.** Hold a model in the off hand and use the learner to put it in (up to four); sneak and use it to take them all out. Its book-style pages of stats and trivia aren't there, its HUD is simpler, and the Curios slot isn't there.
+- **The Deep Learner's screen** has the Java one's layout: the spinning mob, its name, trivia, tier, accuracy, the kills to the next tier and its statistics, with the arrows between models. A click moves a Data Model in or out (there is no carried stack); its text doesn't type itself out, a model's variants aren't cycled, experience is vanilla's 5 for a monster and 1-3 for others, and the Curios slot isn't there. Its HUD is simpler.
+- **Mobs in item icons** stand on a Data Model's base as in the Java mod, drawn without the ghost's transparency. A block model shows the block.
 - **The Data Center's screen** is simpler: right click a model to step through what it makes (Java opens a page for it). Queued outputs work in the machine but can't be set up from this screen.
 - **Kills count only from a player's own blows**, as Horizon's hook says; arrows and other indirect kills don't yet.
 - **Block models** give data for any break of the block, without the Java mod's loot-table check (Silk Touch and so on).
@@ -51,4 +51,4 @@ MIT, as the original. See `LICENSE`.
 
 On Horizon commit `6560641`, on Windows: attuning a framework on a zombie, a kill raising a model in the learner, putting models in and
 out of the learner, a Simulation Chamber cycle, a Loot Fabricator choice and its drops, a Data Center shell, run and outputs, and a LAN
-guest opening a chamber, with 0 panics. **Not tested:** a dedicated server, IO ports by mode, the Fabrication Directive, and block models.
+guest opening a chamber, with 0 panics. Since 7.0.2 also: an IO port taking Enderman batches of 16 pearls without passing 16, an Iron Furnaces generator filling a chamber, the Deep Learner's screen putting models in and taking them out, the mobs on Data Model icons, and the W guide. **Not tested:** a dedicated server, the learner's screen for a LAN guest, the Fabrication Directive, and block models.

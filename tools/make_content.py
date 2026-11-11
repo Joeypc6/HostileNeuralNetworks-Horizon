@@ -111,9 +111,38 @@ A **Data Center** runs up to twenty-five Self Aware models at once. Build a holl
 stained glass walls and ceiling. The controller replaces one bottom-wall block, facing out. **IO Ports** can replace any wall or ceiling block.
 """,
     }
-    for name, text in pages.items():
-        files[f"data/{ID}/ae2guide/{name}"] = text.encode()
-    files[f"data/{ID}/ae2guide/index.json"] = json.dumps({"pages": list(pages)}, indent=2).encode()
+    import guide_index
+    # 3D scenes (drag to turn): the machines, a whole Data Center with its port, and how they join AE2 and Iron Furnaces.
+    north = {"facing": "north"}
+    pages["machines.md"] += "\n" + guide_index.scene(files, ID, "machines", [
+        (0, 0, 0, f"{ID}:sim_chamber", north), (2, 0, 0, f"{ID}:loot_fabricator", north)])
+    shell = []
+    for x in range(7):
+        for y in range(7):
+            for z in range(7):
+                edge = x in (0, 6) or z in (0, 6) or y == 6
+                if y == 0:
+                    shell.append((x, y, z, "minecraft:obsidian"))
+                elif edge and (x, y, z) != (3, 1, 0) and (x, y, z) != (6, 3, 3):
+                    shell.append((x, y, z, "minecraft:black_stained_glass"))
+    shell.append((3, 1, 0, f"{ID}:data_center", north))
+    shell.append((6, 3, 3, f"{ID}:data_center_io_port", {"mode": "outputs"}))
+    pages["machines.md"] += "\nA Data Center in its shell, with an IO Port in a wall:\n\n" + guide_index.scene(files, ID, "data_center", shell)
+    # Pages about other mods: each shows only when that mod is installed too (`requires:`).
+    pages["automation.md"] = (
+        "---\nnavigation:\n  title: With AE2\nitem_ids: []\nrequires:\n- ae2:pattern_provider\n---\n\n# With AE2\n\n"
+        "A **pattern provider** from AE2 on a chamber fills it with matrices; an **import bus** on its side takes the "
+        "predictions back.\n\n"
+        + guide_index.scene(files, ID, "automation", [
+            (0, 0, 0, f"{ID}:sim_chamber", north), (0, 1, 0, "ae2:pattern_provider"), (0, 0, -1, "ae2:import_bus", {"facing": "south"}),
+            (0, 1, -1, "ae2:fluix_glass_cable")]))
+    pages["power_ironfurnaces.md"] = (
+        "---\nnavigation:\n  title: With Iron Furnaces\nitem_ids: []\nrequires:\n- ironfurnaces:augment_generator\n---\n\n"
+        "# With Iron Furnaces\n\nAn Iron Furnaces furnace with a **Generator** augment, on top of a chamber, powers it "
+        "through its bottom face.\n\n"
+        + guide_index.scene(files, ID, "power_ironfurnaces", [
+            (0, 0, 0, f"{ID}:sim_chamber", north), (0, 1, 0, "ironfurnaces:iron_furnace", north)]))
+    guide_index.write(files, ID, pages)
 
 
 def main(jar, out):
@@ -157,7 +186,10 @@ def main(jar, out):
             files[name] = json.dumps({"model": {"type": "minecraft:model", "model": f"{ID}:item/data_model_base"}}).encode()
             continue
         if name == f"assets/{ID}/items/prediction.json":
-            files[name] = json.dumps({"model": {"type": "minecraft:model", "model": f"{ID}:item/prediction"}}).encode()
+            # PredictionTintSource (the model's name colour) is the Java client's: vanilla's custom_model_data tint,
+            # from the colour HNN writes on each prediction.
+            files[name] = json.dumps({"model": {"type": "minecraft:model", "model": f"{ID}:item/prediction",
+                "tints": [{"type": "minecraft:custom_model_data", "index": 0, "default": -1}]}}).encode()
             continue
         files[name] = source.read(name)
     files[f"data/{ID}/hz_models.json"] = json.dumps({"models": models, "tiers": tiers}, indent=1).encode()
@@ -184,7 +216,7 @@ def main(jar, out):
         "# Hostile Neural Networks' blocks and items, from HostileNeuralNetworks-26.1.2-7.0.0.jar by hostilenetworks-horizon/tools/make_content.py.",
         f'id = "{ID}"',
         'name = "Hostile Neural Networks (blocks and items)"',
-        'version = "7.0.1"',
+        'version = "7.0.2"',
         'description = "Hostile Neural Networks\' blocks, recipes and textures."',
         'authors = ["Shadows_of_Fire"]',
         'api = "0.2"',

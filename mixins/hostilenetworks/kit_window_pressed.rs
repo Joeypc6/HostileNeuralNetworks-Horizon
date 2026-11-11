@@ -7,5 +7,5 @@ fn jei_window_pressed(game: &crate::game::Game<'_>, screen: &crate::game::native
     if !*canceled {
         crate::game::hz_kit_creative_hostilenetworks::press(game, screen.mouse, button, canceled);
     }
-} else { () })
+} else { let _ = (game, screen, button, canceled); () })
 }

@@ -5,5 +5,5 @@ fn kit_guide_pressed_hostilenetworks(game: &crate::game::Game<'_>, screen: &crat
     }
     let _ = button;
     crate::game::hz_kit_guide_hostilenetworks::click(game, screen.mouse, canceled);
-} else { () })
+} else { let _ = (game, screen, button, canceled); () })
 }
